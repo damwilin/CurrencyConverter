@@ -1,8 +1,8 @@
 package com.wili.core.data.network.services
 
 import com.wili.core.data.network.Urls
-import com.wili.core.data.network.responses.RateListResponse
-import io.reactivex.Single
+import com.wili.core.data.responses.RateListResponse
+import io.reactivex.Observable
 import retrofit2.http.GET
 import retrofit2.http.Query
 
@@ -12,5 +12,5 @@ interface RatesService {
      * @param base The base currency for which response is calculated
      */
     @GET(Urls.LATEST_RATE_PATH)
-    fun getLatestRates(@Query("base") base:String): Single<RateListResponse>
+    fun getLatestRates(@Query("base") base: String): Observable<RateListResponse>
 }

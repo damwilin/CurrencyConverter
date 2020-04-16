@@ -1,7 +1,10 @@
 package com.wili.core.di.modules
 
+import com.wili.core.BuildConfig
 import com.wili.core.data.RateRepository
-import com.wili.core.data.network.RateRetrofitRemoteDataSource
+import com.wili.core.data.local.RatesLocalDataSource
+import com.wili.core.data.local.RatesLocalDataSourceImpl
+import com.wili.core.data.network.RateRemoteDataSourceImpl
 import com.wili.core.data.network.RatesRemoteDataSource
 import com.wili.core.data.network.Urls
 import com.wili.core.data.network.services.RatesService
@@ -15,7 +18,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Singleton
 
 @Module
-class NetworkModule {
+class DataModule {
     @Singleton
     @Provides
     fun provideHttpLoggingInterceptor(): HttpLoggingInterceptor {
@@ -27,16 +30,19 @@ class NetworkModule {
     @Singleton
     @Provides
     fun provideHttpClient(interceptor: HttpLoggingInterceptor): OkHttpClient {
-        return OkHttpClient.Builder()
-            .addInterceptor(interceptor)
-            .build()
+        val builder = OkHttpClient.Builder()
+        if (BuildConfig.DEBUG) {
+            builder.addInterceptor(interceptor)
+        }
+        return builder.build()
     }
 
     @Singleton
     @Provides
-    fun provideRatesService(): RatesService{
+    fun provideRatesService(okHttpClient: OkHttpClient): RatesService {
         return Retrofit.Builder()
             .baseUrl(Urls.BASE_URL)
+            .client(okHttpClient)
             .addConverterFactory(GsonConverterFactory.create())
             .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
             .build()
@@ -45,11 +51,19 @@ class NetworkModule {
 
     @Singleton
     @Provides
-    fun provideRatesRemoteDataSource(ratesService: RatesService): RatesRemoteDataSource = RateRetrofitRemoteDataSource(ratesService)
+    fun provideRatesRemoteDataSource(ratesService: RatesService): RatesRemoteDataSource =
+        RateRemoteDataSourceImpl(ratesService)
 
     @Singleton
     @Provides
-    fun provideRateRepository(rateRepository: RateRetrofitRemoteDataSource): RateRepository{
-        return RateRepository(rateRepository)
+    fun provideRatesLocalDataSource(): RatesLocalDataSource = RatesLocalDataSourceImpl()
+
+    @Singleton
+    @Provides
+    fun provideRateRepository(
+        rateRemoteDataSource: RatesRemoteDataSource,
+        ratesLocalDataSource: RatesLocalDataSource
+    ): RateRepository {
+        return RateRepository(rateRemoteDataSource, ratesLocalDataSource)
     }
 }

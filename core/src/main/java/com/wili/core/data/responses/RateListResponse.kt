@@ -1,4 +1,4 @@
-package com.wili.core.data.network.responses
+package com.wili.core.data.responses
 
 import java.math.BigDecimal
 

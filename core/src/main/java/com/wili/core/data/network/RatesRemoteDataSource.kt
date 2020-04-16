@@ -1,9 +1,8 @@
 package com.wili.core.data.network
 
-import com.wili.core.data.network.responses.RateListResponse
-import com.wili.core.domain.RateList
-import io.reactivex.Single
+import com.wili.core.data.responses.RateListResponse
+import io.reactivex.Observable
 
 interface RatesRemoteDataSource {
-    fun getRates(baseCurrency:String): Single<RateListResponse>
+    fun getRates(baseCurrency: String): Observable<RateListResponse>
 }
