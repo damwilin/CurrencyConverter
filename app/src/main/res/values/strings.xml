@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">RCurrencyConverter</string>
+    <string name="rates_header">Rates</string>
 </resources>
