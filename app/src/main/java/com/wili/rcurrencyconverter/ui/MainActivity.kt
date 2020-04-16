@@ -64,6 +64,6 @@ class MainActivity : BaseActivity(), OnRateChangeListener {
 
     override fun onPause() {
         super.onPause()
-        viewModel.clearDisposable()
+        viewModel.stopFetchingData()
     }
 }

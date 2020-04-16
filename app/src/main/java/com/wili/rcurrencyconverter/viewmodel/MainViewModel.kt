@@ -67,7 +67,7 @@ class MainViewModel @Inject constructor(private val ratesUseCase: RateUseCase) :
         _error.postValue(throwable.message)
     }
 
-    fun clearDisposable() {
+    fun stopFetchingData() {
         compositeDisposable.clear()
     }
 
